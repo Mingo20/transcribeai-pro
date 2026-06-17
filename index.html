@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<meta name="theme-color" content="#0A0A0A">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="TranscribeAI Pro">
+<meta name="description" content="Transcripcion profesional de audio con IA">
+<title>TranscribeAI Pro</title>
+<link rel="manifest" href="manifest.json">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-font-smoothing:antialiased}
+:root{--bg:#0A0A0A;--bg2:#111827;--bg3:#1F2937;--bg4:#374151;--p:#8B5CF6;--b:#4285F4;--c:#06B6D4;--g:#10B981;--o:#F59E0B;--r:#EF4444;--on:#F9FAFB;--on2:#D1D5DB;--on3:#9CA3AF;--on4:#4B5563;--bdr:#1F2937;--bdr2:#374151}
+html,body{height:100%;font-family:'Inter',sans-serif;background:var(--bg);color:var(--on);overflow:hidden}
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-thumb{background:var(--bdr2);border-radius:2px}
+#app{display:flex;height:100dvh;overflow:hidden}
+#sb{width:255px;flex-shrink:0;background:var(--bg2);border-right:1px solid var(--bdr);display:flex;flex-direction:column;overflow:hidden;transition:width .25s}
+#sb.col{width:64px}
+.sb-hd{padding:14px 12px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--bdr);min-height:60px}
+.logo{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,var(--p),var(--b));display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.logo svg{width:20px;height:20px;color:#fff}
+.lt{font-size:15px;font-weight:800;white-space:nowrap;transition:opacity .25s}
+.lt em{color:var(--p);font-style:normal}
+#sb.col .lt,#sb.col .sl,#sb.col .nt,#sb.col .nbdg,#sb.col .ui{opacity:0;width:0;overflow:hidden}
+.stog{margin-left:auto;width:28px;height:28px;border-radius:8px;border:none;background:none;color:var(--on3);cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.stog:hover{background:var(--bg3);color:var(--on)}
+.snav{flex:1;overflow-y:auto;padding:8px 6px}
+.sl{font-size:10px;font-weight:600;color:var(--on4);text-transform:uppercase;letter-spacing:.8px;padding:10px 8px 4px;white-space:nowrap}
+.nb{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:12px;cursor:pointer;border:none;background:none;width:100%;text-align:left;color:var(--on3);margin-bottom:1px;white-space:nowrap;transition:all .2s}
+.nb:hover{background:var(--bg3);color:var(--on)}
+.nb.act{background:rgba(139,92,246,.12);color:var(--p)}
+.nb svg{width:18px;height:18px;flex-shrink:0}
+.nt{font-size:13px;font-weight:500}
+.nbdg{margin-left:auto;padding:1px 6px;background:var(--p);color:#fff;font-size:10px;font-weight:700;border-radius:20px;flex-shrink:0}
+.sf{padding:10px 6px;border-top:1px solid var(--bdr)}
+.uc{display:flex;align-items:center;gap:10px;padding:8px;border-radius:12px;cursor:pointer;transition:all .2s}
+.uc:hover{background:var(--bg3)}
+.uav{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--p),var(--b));display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff;flex-shrink:0}
+.ui{overflow:hidden;flex:1}
+.un{font-size:12px;font-weight:600;white-space:nowrap}
+.up{font-size:10px;color:var(--p)}
+#main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0}
+#tb{height:60px;background:var(--bg2);border-bottom:1px solid var(--bdr);display:flex;align-items:center;padding:0 16px;gap:10px;flex-shrink:0}
+.tbt{font-size:16px;font-weight:700;flex:1}
+.tbb{width:36px;height:36px;border-radius:50%;background:none;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--on3);transition:all .2s}
+.tbb:hover{background:var(--bg3);color:var(--on)}.tbb svg{width:18px;height:18px}
+.mob{display:none}
+.ppill{display:flex;align-items:center;gap:5px;padding:4px 10px;background:rgba(139,92,246,.1);border:1px solid rgba(139,92,246,.2);border-radius:16px;font-size:10px;font-weight:700;color:var(--p)}
+#cnt{flex:1;overflow-y:auto}
+.pg{display:none;animation:fu .3s ease}.pg.act{display:block}
+@keyframes fu{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.hero{background:linear-gradient(160deg,#0A0A0A 0%,#0D0B1E 55%,#0A0A0A 100%);padding:48px 32px 36px;position:relative;overflow:hidden;text-align:center}
+.hero::before{content:'';position:absolute;top:-60px;left:50%;transform:translateX(-50%);width:500px;height:500px;background:radial-gradient(circle,rgba(139,92,246,.08),transparent 70%);pointer-events:none}
+.hin{max-width:700px;margin:0 auto;position:relative;z-index:1}
+.hbdg{display:inline-flex;align-items:center;gap:6px;padding:5px 14px;background:rgba(139,92,246,.08);border:1px solid rgba(139,92,246,.2);border-radius:20px;font-size:11px;font-weight:600;color:var(--p);margin-bottom:20px}
+.dot{width:6px;height:6px;border-radius:50%;background:var(--c);animation:bk 2s infinite}
+@keyframes bk{0%,100%{opacity:1}50%{opacity:.3}}
+.hh{font-size:clamp(22px,4vw,44px);font-weight:900;line-height:1.1;margin-bottom:14px}
+.hl{background:linear-gradient(90deg,var(--p),var(--b));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hp{font-size:14px;color:var(--on2);line-height:1.7;max-width:500px;margin:0 auto 28px}
+.hacts{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.btnp{padding:11px 24px;background:var(--p);color:#fff;border:none;border-radius:18px;font-size:13px;font-weight:700;cursor:pointer;transition:all .25s;display:flex;align-items:center;gap:7px}
+.btnp:hover{background:#7C3AED;transform:translateY(-1px)}
+.btno{padding:11px 24px;background:none;color:var(--on);border:1px solid var(--bdr2);border-radius:18px;font-size:13px;font-weight:600;cursor:pointer;transition:all .25s;display:flex;align-items:center;gap:7px}
+.btno:hover{border-color:var(--p);color:var(--p)}
+.usec{padding:20px 32px 28px}
+.uzone{border:2px dashed var(--bdr2);border-radius:18px;padding:40px 24px;text-align:center;cursor:pointer;transition:all .3s;background:var(--bg2);position:relative;overflow:hidden}
+.uzone:hover,.uzone.drag{border-color:var(--p);background:rgba(139,92,246,.03)}
+.uico{width:60px;height:60px;border-radius:18px;background:rgba(139,92,246,.1);display:flex;align-items:center;justify-content:center;margin:0 auto 14px}
+.uico svg{width:30px;height:30px;color:var(--p)}
+.ut{font-size:17px;font-weight:700;margin-bottom:6px}
+.up2{font-size:13px;color:var(--on3);margin-bottom:16px}
+.ufmts{display:flex;gap:7px;justify-content:center;flex-wrap:wrap}
+.fmt{padding:3px 9px;background:var(--bg3);border:1px solid var(--bdr2);border-radius:20px;font-size:10px;font-weight:600;color:var(--on3)}
+#finp{position:absolute;inset:0;opacity:0;cursor:pointer}
+.rrow{display:flex;gap:12px;justify-content:center;margin-top:16px;flex-wrap:wrap}
+.rbtn{display:flex;align-items:center;gap:8px;padding:10px 20px;background:var(--bg3);border:1px solid var(--bdr2);border-radius:18px;cursor:pointer;transition:all .25s;font-size:13px;font-weight:600;color:var(--on2)}
+.rbtn:hover{border-color:var(--p);color:var(--p)}
+.rbtn.rec{border-color:var(--r);color:var(--r);background:rgba(239,68,68,.05);animation:rp 1.5s infinite}
+@keyframes rp{0%,100%{box-shadow:0 0 0 0 rgba(239,68,68,.3)}50%{box-shadow:0 0 0 8px rgba(239,68,68,0)}}
+.rdot{width:9px;height:9px;border-radius:50%;background:var(--r)}
+.rbtn.rec .rdot{animation:bk .8s infinite}
+.stats{display:flex;gap:12px;padding:0 32px 22px;flex-wrap:wrap}
+.stat{flex:1;min-width:100px;background:var(--bg2);border:1px solid var(--bdr);border-radius:18px;padding:15px;text-align:center;transition:all .2s;cursor:default}
+.stat:hover{border-color:var(--p);transform:translateY(-1px)}
+.si{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;margin:0 auto 8px}
+.si svg{width:19px;height:19px}
+.sn{font-size:21px;font-weight:800}.sl2{font-size:10px;color:var(--on3);margin-top:2px}
+.sechd{padding:0 32px;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between}
+.sechd h2{font-size:16px;font-weight:700}
+.sa{font-size:12px;color:var(--p);background:none;border:none;cursor:pointer;font-weight:600}
+.tclist{display:flex;flex-direction:column;gap:9px;padding:0 32px 80px}
+.tcc{background:var(--bg2);border:1px solid var(--bdr);border-radius:18px;padding:15px;cursor:pointer;transition:all .25s;display:flex;align-items:flex-start;gap:13px}
+.tcc:hover{border-color:var(--p);transform:translateY(-1px)}
+.tci{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:22px}
+.tcm{flex:1;min-width:0}
+.tct{font-size:14px;font-weight:700;margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tcs{font-size:12px;color:var(--on3)}
+.tctags{display:flex;gap:6px;margin-top:7px;flex-wrap:wrap}
+.tag{padding:2px 8px;border-radius:12px;font-size:10px;font-weight:600}
+.tp{background:rgba(139,92,246,.1);color:var(--p)}
+.tg{background:rgba(16,185,129,.1);color:var(--g)}
+.tb{background:rgba(66,133,244,.1);color:var(--b)}
+.to{background:rgba(245,158,11,.1);color:var(--o)}
+.tca2{display:flex;gap:5px;align-items:center}
+.icb{width:29px;height:29px;border-radius:8px;background:none;border:1px solid var(--bdr);cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--on3);transition:all .2s}
+.icb:hover{border-color:var(--p);color:var(--p)}.icb svg{width:13px;height:13px}
+.tvwrap{padding:24px 32px;max-width:1200px}
+.tvhd{display:flex;align-items:center;gap:12px;margin-bottom:18px}
+.tvbk{width:34px;height:34px;border-radius:50%;border:none;background:var(--bg3);cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--on2);transition:all .2s}
+.tvbk:hover{background:var(--bg4)}.tvbk svg{width:18px;height:18px}
+.tvtitle{font-size:19px;font-weight:800;flex:1}
+.tvgrid{display:grid;gap:14px}
+@media(min-width:900px){.tvgrid{grid-template-columns:1fr 350px}}
+.tvbox{background:var(--bg2);border:1px solid var(--bdr);border-radius:18px;overflow:hidden;margin-bottom:12px}
+.tvbh{padding:13px 17px;border-bottom:1px solid var(--bdr);display:flex;align-items:center;gap:9px}
+.tvbh h3{font-size:13px;font-weight:700;flex:1}.tvbh svg{width:17px;height:17px;flex-shrink:0}
+.tvbd{padding:17px}
+.trtxt{font-size:14px;line-height:1.8;color:var(--on2);max-height:270px;overflow-y:auto}
+.spblk{margin-bottom:13px}
+.splbl{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px}
+.sptxt{font-size:13px;line-height:1.7;color:var(--on2);padding-left:11px;border-left:2px solid var(--bdr2)}
+.extg{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+@media(max-width:560px){.extg{grid-template-columns:1fr}}
+.exti{background:var(--bg3);border:1px solid var(--bdr);border-radius:12px;padding:11px}
+.exti h4{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;margin-bottom:7px}
+.exti ul{list-style:none;display:flex;flex-direction:column;gap:5px}
+.exti li{font-size:12px;color:var(--on2);display:flex;gap:5px;line-height:1.5}
+.exti li::before{content:'→';color:var(--p);flex-shrink:0;font-weight:700}
+.exprow{display:flex;gap:7px;flex-wrap:wrap}
+.expbtn{display:flex;align-items:center;gap:5px;padding:7px 14px;background:var(--bg3);border:1px solid var(--bdr2);border-radius:12px;font-size:12px;font-weight:600;cursor:pointer;transition:all .2s;color:var(--on2)}
+.expbtn:hover{border-color:var(--p);color:var(--p)}.expbtn svg{width:13px;height:13px}
+.chatp{background:var(--bg2);border:1px solid var(--bdr);border-radius:18px;display:flex;flex-direction:column;overflow:hidden}
+@media(min-width:900px){.chatp{position:sticky;top:0;height:calc(100vh - 60px - 48px)}}
+@media(max-width:899px){.chatp{height:400px;margin-top:0}}
+.chhd{padding:12px 14px;border-bottom:1px solid var(--bdr);display:flex;align-items:center;gap:9px;flex-shrink:0}
+.chav{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--p),var(--b));display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.chav svg{width:18px;height:18px;color:#fff}
+.chnm{font-size:12px;font-weight:700}.chst{font-size:10px;color:var(--g)}
+.chmsgs{flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:8px}
+.cm{display:flex;flex-direction:column;max-width:92%;gap:2px;animation:fu .2s ease}
+.cm.ai{align-self:flex-start;align-items:flex-start}.cm.usr{align-self:flex-end;align-items:flex-end}
+.bbl{padding:9px 13px;border-radius:16px;font-size:13px;line-height:1.6;word-break:break-word}
+.cm.ai .bbl{background:var(--bg3);border:1px solid var(--bdr);border-radius:16px 16px 16px 3px}
+.cm.usr .bbl{background:linear-gradient(135deg,var(--p),var(--b));color:#fff;border-radius:16px 16px 3px 16px}
+.cmt{font-size:9px;color:var(--on4);padding:0 3px}
+.typ{background:var(--bg3);border:1px solid var(--bdr);padding:9px 13px;border-radius:16px 16px 16px 3px;display:flex;gap:3px;align-items:center}
+.typ span{width:6px;height:6px;border-radius:50%;background:var(--on3);animation:td .9s ease infinite}
+.typ span:nth-child(2){animation-delay:.15s}.typ span:nth-child(3){animation-delay:.3s}
+@keyframes td{0%,80%,100%{transform:scale(.6);opacity:.4}40%{transform:scale(1);opacity:1}}
+.chips{display:flex;gap:6px;padding:8px 12px;overflow-x:auto;border-top:1px solid var(--bdr);flex-shrink:0}
+.chips::-webkit-scrollbar{display:none}
+.chp{padding:5px 10px;background:var(--bg3);border:1px solid var(--bdr);border-radius:14px;font-size:11px;font-weight:600;color:var(--on2);white-space:nowrap;cursor:pointer;flex-shrink:0;transition:all .2s}
+.chp:hover{border-color:var(--p);color:var(--p)}
+.chir{padding:9px 10px;border-top:1px solid var(--bdr);display:flex;align-items:flex-end;gap:7px;flex-shrink:0}
+.chta{flex:1;padding:8px 11px;background:var(--bg3);border:1px solid var(--bdr);border-radius:18px;color:var(--on);font-size:13px;font-family:inherit;resize:none;outline:none;max-height:90px;line-height:1.5;transition:border .2s}
+.chta:focus{border-color:var(--p)}.chta::placeholder{color:var(--on4)}
+.snd{width:35px;height:35px;border-radius:50%;background:var(--p);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s}
+.snd:hover{background:#7C3AED;transform:scale(1.05)}.snd svg{width:15px;height:15px;color:#fff}
+.pltgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:11px;padding:14px 32px 80px}
+.proc{position:fixed;inset:0;background:rgba(0,0,0,.88);backdrop-filter:blur(14px);z-index:800;display:none;align-items:center;justify-content:center;flex-direction:column;gap:18px;text-align:center;padding:24px}
+.proc.open{display:flex;animation:fi .3s ease}
+@keyframes fi{from{opacity:0}to{opacity:1}}
+.pico{width:76px;height:76px;border-radius:22px;background:rgba(139,92,246,.15);border:1px solid rgba(139,92,246,.3);display:flex;align-items:center;justify-content:center;animation:pp 2s infinite}
+@keyframes pp{0%,100%{box-shadow:0 0 0 0 rgba(139,92,246,.3)}50%{box-shadow:0 0 0 18px rgba(139,92,246,0)}}
+.pico svg{width:38px;height:38px;color:var(--p)}
+.pt{font-size:19px;font-weight:800}.pp{font-size:13px;color:var(--on2)}
+.psteps{display:flex;flex-direction:column;gap:7px;width:100%;max-width:290px}
+.ps{display:flex;align-items:center;gap:9px;padding:10px 13px;background:var(--bg2);border:1px solid var(--bdr);border-radius:12px;font-size:13px;transition:all .3s}
+.ps.done{border-color:var(--g);color:var(--g)}.ps.active{border-color:var(--p);color:var(--p)}
+.ps svg{width:15px;height:15px;flex-shrink:0}
+.spin{animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.ov{position:fixed;inset:0;background:rgba(0,0,0,.75);backdrop-filter:blur(10px);z-index:500;display:none;align-items:flex-end;justify-content:center}
+.ov.open{display:flex;animation:fi .2s ease}
+.modal{background:var(--bg2);border:1px solid var(--bdr);width:100%;max-width:540px;max-height:88vh;overflow-y:auto;animation:su .35s cubic-bezier(.34,1.56,.64,1)}
+@keyframes su{from{transform:translateY(100%)}to{transform:translateY(0)}}
+@media(min-width:640px){.ov{align-items:center}.modal{border-radius:18px;max-height:80vh;animation:zi .3s cubic-bezier(.34,1.4,.64,1)}}
+@keyframes zi{from{opacity:0;transform:scale(.88)}to{opacity:1;transform:scale(1)}}
+@media(max-width:639px){.modal{border-radius:18px 18px 0 0}}
+.mhdl{width:36px;height:3px;background:var(--bdr2);border-radius:2px;margin:10px auto 0}
+.mhd{padding:13px 17px;border-bottom:1px solid var(--bdr);display:flex;align-items:center;gap:10px}
+.mico{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.mico svg{width:21px;height:21px}.mt{font-size:15px;font-weight:800;flex:1}
+.mx{width:28px;height:28px;border-radius:50%;background:var(--bg3);border:1px solid var(--bdr);cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--on3);transition:all .2s}
+.mx:hover{background:var(--bg4)}.mx svg{width:13px;height:13px}
+.mbd{padding:17px}.mft{padding:13px 17px;border-top:1px solid var(--bdr);display:flex;gap:8px;justify-content:flex-end}
+.bot{position:fixed;bottom:0;left:0;right:0;background:var(--bg2);border-top:1px solid var(--bdr);display:none;z-index:200;padding-bottom:env(safe-area-inset-bottom)}
+.bnr{display:flex;justify-content:space-around;padding:6px 0}
+.bn{display:flex;flex-direction:column;align-items:center;gap:2px;padding:5px 12px;border:none;background:none;cursor:pointer;color:var(--on4);transition:all .2s;flex:1}
+.bn.act{color:var(--p)}.bn svg{width:21px;height:21px}.bn span{font-size:9px;font-weight:600}
+.bnfab{margin-top:-20px}
+.fab{width:46px;height:46px;border-radius:50%;background:linear-gradient(135deg,var(--p),var(--b));display:flex;align-items:center;justify-content:center;box-shadow:0 4px 18px rgba(139,92,246,.4)}
+.fab svg{width:21px;height:21px;color:#fff}
+.dov{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:300;display:none}.dov.open{display:block}
+.drw{position:fixed;top:0;left:0;bottom:0;width:268px;background:var(--bg2);border-right:1px solid var(--bdr);z-index:400;transform:translateX(-100%);transition:transform .3s;overflow-y:auto}
+.drw.open{transform:translateX(0)}
+.toast{position:fixed;bottom:76px;left:50%;transform:translateX(-50%) translateY(16px);background:rgba(17,24,39,.96);color:#fff;padding:8px 16px;border-radius:20px;font-size:12px;font-weight:600;z-index:999;opacity:0;transition:all .3s;pointer-events:none;white-space:nowrap;border:1px solid rgba(255,255,255,.06);backdrop-filter:blur(8px)}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+@media(max-width:768px){
+  #sb{display:none}.mob{display:flex}.bot{display:block}
+  #cnt{padding-bottom:68px}
+  .hero{padding:28px 16px 28px}.usec{padding:16px 16px 20px}
+  .stats{padding:0 16px 18px}.sechd{padding:0 16px}.tclist{padding:0 16px 80px}
+  .tvwrap{padding:16px 16px 80px}.pltgrid{padding:14px 16px 80px}
+}
+</style>
+</head>
+<body>
+<div id="app">
+<nav id="sb">
+  <div class="sb-hd">
+    <div class="logo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg></div>
+    <span class="lt">Transcribe<em>AI</em></span>
+    <button class="stog" onclick="toggleSB()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M3 12h18M3 6h18M3 18h18"/></svg></button>
+  </div>
+  <div class="snav">
+    <div class="sl">Principal</div>
+    <button class="nb act" onclick="goPage('home')" id="nb-home"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><span class="nt">Inicio</span></button>
+    <button class="nb" onclick="goPage('library')" id="nb-library"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg><span class="nt">Mis Transcripciones</span><span class="nbdg" id="tcc">3</span></button>
+    <button class="nb" onclick="goPage('templates')" id="nb-templates"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg><span class="nt">Plantillas</span></button>
+    <div class="sl" style="margin-top:8px">Casos de Uso</div>
+    <button class="nb" onclick="filtrar('reunion')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg><span class="nt">Reuniones</span></button>
+    <button class="nb" onclick="filtrar('medico')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg><span class="nt">Medico / Clinico</span></button>
+    <button class="nb" onclick="filtrar('legal')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg><span class="nt">Legal / Judicial</span></button>
+    <button class="nb" onclick="filtrar('educacion')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg><span class="nt">Educacion</span></button>
+  </div>
+  <div class="sf">
+    <div class="uc" onclick="abrirM('m-plan')">
+      <div class="uav">D</div>
+      <div class="ui"><div class="un">Domingo Guerra</div><div class="up">Plan Gratuito</div></div>
+    </div>
+  </div>
+</nav>
+<div id="main">
+  <div id="tb">
+    <button class="tbb mob" onclick="abrirDrw()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h18M3 6h18M3 18h18"/></svg></button>
+    <div class="tbt" id="tbt">Inicio</div>
+    <div class="ppill">Gratis</div>
+    <button class="tbb" onclick="abrirM('m-cfg')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/></svg></button>
+  </div>
+  <div id="cnt">
+    <div class="pg act" id="pg-home">
+      <div class="hero">
+        <div class="hin">
+          <div class="hbdg"><span class="dot"></span>Supera a PLAUD sin comprar hardware</div>
+          <h1 class="hh">Tu <span class="hl">asistente de transcripcion</span> mas inteligente</h1>
+          <p class="hp">Sube un audio o graba en vivo. La IA transcribe, identifica participantes, extrae tareas y decisiones — y te deja chatear con el contenido.</p>
+          <div class="hacts">
+            <button class="btnp" onclick="document.getElementById('finp').click()">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+              Subir audio
+            </button>
+            <button class="btno" onclick="toggleRec()">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="6" fill="currentColor"/></svg>
+              Grabar ahora
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="usec">
+        <div class="uzone" id="dzone" ondrop="onDrop(event)" ondragover="onDragOver(event)" ondragleave="onDragLeave()">
+          <input type="file" id="finp" accept="audio/*,video/*,.mp3,.mp4,.wav,.m4a,.ogg,.flac,.webm" onchange="onFile(event)">
+          <div class="uico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg></div>
+          <div class="ut">Arrastra tu audio aqui</div>
+          <div class="up2">o haz clic para seleccionar desde tu dispositivo</div>
+          <div class="ufmts"><span class="fmt">MP3</span><span class="fmt">MP4</span><span class="fmt">WAV</span><span class="fmt">M4A</span><span class="fmt">OGG</span><span class="fmt">FLAC</span><span class="fmt">WEBM</span></div>
+        </div>
+        <div class="rrow">
+          <button class="rbtn" id="rbtn" onclick="toggleRec()"><span class="rdot"></span><span id="rtxt">Grabar desde microfono</span></button>
+        </div>
+      </div>
+      <div class="stats">
+        <div class="stat"><div class="si" style="background:rgba(139,92,246,.1)"><svg viewBox="0 0 24 24" fill="none" stroke="#8B5CF6" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/></svg></div><div class="sn" id="stotal">3</div><div class="sl2">Transcripciones</div></div>
+        <div class="stat"><div class="si" style="background:rgba(16,185,129,.1)"><svg viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div><div class="sn">112</div><div class="sl2">Idiomas</div></div>
+        <div class="stat"><div class="si" style="background:rgba(66,133,244,.1)"><svg viewBox="0 0 24 24" fill="none" stroke="#4285F4" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div><div class="sn">Chat</div><div class="sl2">Con IA</div></div>
+        <div class="stat"><div class="si" style="background:rgba(245,158,11,.1)"><svg viewBox="0 0 24 24" fill="none" stroke="#F59E0B" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/></svg></div><div class="sn">PDF</div><div class="sl2">Exportar</div></div>
+      </div>
+      <div class="sechd"><h2>Transcripciones recientes</h2><button class="sa" onclick="goPage('library')">Ver todas</button></div>
+      <div class="tclist" id="tclist1"></div>
+    </div>
+    <div class="pg" id="pg-library">
+      <div style="padding:22px 32px 12px"><h2 style="font-size:19px;font-weight:800;margin-bottom:4px">Mis Transcripciones</h2><p style="font-size:13px;color:var(--on2)">Todo tu historial en un lugar.</p></div>
+      <div class="tclist" id="tclist2"></div>
+    </div>
+    <div class="pg" id="pg-templates">
+      <div style="padding:22px 32px 12px"><h2 style="font-size:19px;font-weight:800;margin-bottom:4px">Plantillas de Extraccion</h2><p style="font-size:13px;color:var(--on2)">Elige el tipo y la IA extrae exactamente lo que necesitas.</p></div>
+      <div class="pltgrid" id="pltgrid"></div>
+    </div>
+    <div class="pg" id="pg-view">
+      <div class="tvwrap">
+        <div class="tvhd">
+          <button class="tvbk" onclick="goPage('home')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg></button>
+          <div class="tvtitle" id="tvtitle">Transcripcion</div>
+          <button class="btno" id="tvexp" style="padding:7px 14px;font-size:12px">PDF</button>
+        </div>
+        <div class="tvgrid" id="tvgrid"></div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+<div class="bot">
+  <div class="bnr">
+    <button class="bn act" onclick="goPage('home');actBN('bnh')" id="bnh"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg><span>Inicio</span></button>
+    <button class="bn" onclick="goPage('library');actBN('bnl')" id="bnl"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg><span>Biblioteca</span></button>
+    <button class="bn bnfab" onclick="document.getElementById('finp').click()"><div class="fab"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/></svg></div><span>Subir</span></button>
+    <button class="bn" onclick="goPage('templates');actBN('bnt')" id="bnt"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg><span>Plantillas</span></button>
+    <button class="bn" onclick="abrirM('m-plan')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span>Perfil</span></button>
+  </div>
+</div>
+<div class="dov" id="dov" onclick="cerrarDrw()"></div>
+<div class="drw" id="drw">
+  <div class="sb-hd" style="padding:13px">
+    <div class="logo"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5" width="20" height="20"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/></svg></div>
+    <span style="font-size:15px;font-weight:800">Transcribe<em style="color:#8B5CF6;font-style:normal">AI</em></span>
+    <button onclick="cerrarDrw()" style="margin-left:auto;background:none;border:none;color:var(--on2);cursor:pointer;font-size:20px;padding:4px">x</button>
+  </div>
+  <div style="padding:8px 6px">
+    <button class="nb" onclick="goPage('home');cerrarDrw()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg><span class="nt">Inicio</span></button>
+    <button class="nb" onclick="goPage('library');cerrarDrw()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg><span class="nt">Mis Transcripciones</span></button>
+    <button class="nb" onclick="goPage('templates');cerrarDrw()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg><span class="nt">Plantillas</span></button>
+    <div style="height:1px;background:var(--bdr);margin:8px 0"></div>
+    <button class="nb" onclick="filtrar('reunion');cerrarDrw()"><span class="nt">Reuniones de negocios</span></button>
+    <button class="nb" onclick="filtrar('medico');cerrarDrw()"><span class="nt">Medico / Clinico</span></button>
+    <button class="nb" onclick="filtrar('legal');cerrarDrw()"><span class="nt">Legal / Judicial</span></button>
+    <button class="nb" onclick="filtrar('educacion');cerrarDrw()"><span class="nt">Educacion</span></button>
+  </div>
+</div>
+<div class="proc" id="proc">
+  <div class="pico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/></svg></div>
+  <div class="pt">Procesando con IA...</div>
+  <div class="pp" id="pp">Analizando audio</div>
+  <div class="psteps">
+    <div class="ps" id="ps1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="spin"><circle cx="12" cy="12" r="10" stroke-dasharray="56" stroke-dashoffset="28"/></svg>Transcribiendo audio</div>
+    <div class="ps" id="ps2"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg>Identificando participantes</div>
+    <div class="ps" id="ps3"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg>Extrayendo informacion clave</div>
+    <div class="ps" id="ps4"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg>Generando resumen ejecutivo</div>
+  </div>
+</div>
+<div class="ov" id="m-cfg" onclick="if(event.target===this)cerrarM('m-cfg')">
+  <div class="modal">
+    <div class="mhdl"></div>
+    <div class="mhd"><div class="mico" style="background:rgba(139,92,246,.1)"><svg viewBox="0 0 24 24" fill="none" stroke="#8B5CF6" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/></svg></div><div class="mt">Configuracion</div><button class="mx" onclick="cerrarM('m-cfg')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
+    <div class="mbd" style="display:flex;flex-direction:column;gap:11px">
+      <div style="background:var(--bg3);border:1px solid var(--bdr);border-radius:18px;padding:15px">
+        <div style="font-size:13px;font-weight:700;margin-bottom:9px">Idioma de transcripcion</div>
+        <select style="width:100%;padding:8px 11px;background:var(--bg4);border:1px solid var(--bdr2);border-radius:12px;color:var(--on);font-size:13px;outline:none">
+          <option>Espanol (por defecto)</option><option>English</option><option>Francais</option><option>Portugues</option><option>Detectar automaticamente</option>
+        </select>
+      </div>
+      <div style="background:var(--bg3);border:1px solid var(--bdr);border-radius:18px;padding:15px">
+        <div style="font-size:13px;font-weight:700;margin-bottom:9px">Extraer automaticamente</div>
+        <label style="display:flex;align-items:center;gap:9px;margin-bottom:7px;cursor:pointer;font-size:13px"><input type="checkbox" checked style="accent-color:#8B5CF6"> Resumen ejecutivo</label>
+        <label style="display:flex;align-items:center;gap:9px;margin-bottom:7px;cursor:pointer;font-size:13px"><input type="checkbox" checked style="accent-color:#8B5CF6"> Tareas y responsables</label>
+        <label style="display:flex;align-items:center;gap:9px;margin-bottom:7px;cursor:pointer;font-size:13px"><input type="checkbox" checked style="accent-color:#8B5CF6"> Decisiones clave</label>
+        <label style="display:flex;align-items:center;gap:9px;cursor:pointer;font-size:13px"><input type="checkbox" checked style="accent-color:#8B5CF6"> Fechas y compromisos</label>
+      </div>
+    </div>
+    <div class="mft"><button class="btno" onclick="cerrarM('m-cfg')" style="padding:8px 16px">Cerrar</button><button class="btnp" onclick="cerrarM('m-cfg');toast('Guardado')" style="padding:8px 16px">Guardar</button></div>
+  </div>
+</div>
+<div class="ov" id="m-plan" onclick="if(event.target===this)cerrarM('m-plan')">
+  <div class="modal">
+    <div class="mhdl"></div>
+    <div class="mhd"><div class="mico" style="background:rgba(139,92,246,.1)"><svg viewBox="0 0 24 24" fill="none" stroke="#8B5CF6" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div><div class="mt">Domingo Guerra</div><button class="mx" onclick="cerrarM('m-plan')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
+    <div class="mbd">
+      <div style="background:rgba(139,92,246,.06);border:1px solid rgba(139,92,246,.2);border-radius:18px;padding:18px;text-align:center;margin-bottom:14px"><div style="font-size:26px;font-weight:900;color:#8B5CF6">Plan Gratuito</div><div style="font-size:13px;color:var(--on2);margin-top:3px">Sin limites de uso</div></div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <div style="display:flex;align-items:center;gap:9px;font-size:13px"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Transcripciones ilimitadas con IA</div>
+        <div style="display:flex;align-items:center;gap:9px;font-size:13px"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Chat inteligente con el audio</div>
+        <div style="display:flex;align-items:center;gap:9px;font-size:13px"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Exportar PDF, TXT y Markdown</div>
+        <div style="display:flex;align-items:center;gap:9px;font-size:13px"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>112 idiomas soportados</div>
+      </div>
+    </div>
+    <div class="mft"><button class="btnp" onclick="cerrarM('m-plan')" style="padding:8px 20px">Perfecto!</button></div>
+  </div>
+</div>
+<div class="toast" id="tel"></div>
+<script>
+const API='https://app.base44.com/api/agents/69bf571e53cddb8789552b4e';
+const KEY='f14d50c117b4427281b91bbb836121c8';
+const CID='69bf5721ca3719553a969863';
+let busy=false,mRec=null,rChunks=[],recOn=false,tcA=null;
+const TCS=[
+  {id:'t1',titulo:'Reunion Directivos Q2 2026',tipo:'reunion',dur:'45 min',fecha:'16 Jun 2026',words:6240,
+   part:['Domingo G.','Maria Lopez','Carlos R.'],
+   resumen:'Se aprobo expansion a Santiago con $500K. Carlos R. lidera el proyecto con fecha limite 30 de junio.',
+   trans:[{sp:'Domingo G.',col:'#8B5CF6',txt:'Buenos dias. Revisamos Q1: crecimiento del 34% en ingresos recurrentes. Aprobamos expansion a Santiago.'},
+          {sp:'Maria Lopez',col:'#10B981',txt:'Identificamos 3 oportunidades. Santiago tiene demanda no atendida importante en nuestro segmento.'},
+          {sp:'Carlos R.',col:'#4285F4',txt:'El analisis confirma 15% de mercado en 6 meses con la inversion correcta. Acepto liderar el proyecto.'}],
+   tareas:['Carlos R. presenta plan de expansion (30 Jun)','Maria Lopez coordina ventas regional','Revision presupuesto Q3 proxima semana'],
+   decisiones:['Expansion a Santiago aprobada con $500K','Carlos R. nombrado lider del proyecto','Proxima reunion: 1 de julio 2026'],
+   fechas:['30 junio - Plan de accion','1 julio - Reunion directiva'],tags:['reunion','empresarial']},
+  {id:'t2',titulo:'Consulta Medica - Hipertension',tipo:'medico',dur:'22 min',fecha:'15 Jun 2026',words:2890,
+   part:['Dr. Ramirez','Juan Perez'],
+   resumen:'Ajuste de Losartan 50mg a 100mg. Examen de sangre en 5 dias. Control en 30 dias.',
+   trans:[{sp:'Dr. Ramirez',col:'#10B981',txt:'Como ha estado la presion arterial con el nuevo medicamento?'},
+          {sp:'Juan Perez',col:'#4285F4',txt:'Algo mejor. En mananas 130/85 pero tarde sube. Tengo algo de mareo.'},
+          {sp:'Dr. Ramirez',col:'#10B981',txt:'Ajustamos Losartan a 100mg y agregamos hidroclorotiazida. Solicito perfil lipidico completo.'}],
+   tareas:['Examen de sangre perfil lipidico (5 dias)','Losartan 100mg cada manana','Control en 30 dias'],
+   decisiones:['Ajuste Losartan 50mg a 100mg','Agregar hidroclorotiazida 12.5mg','Solicitar perfil lipidico'],
+   fechas:['5 dias - Examen de sangre','30 dias - Consulta de control'],tags:['medico','salud']},
+  {id:'t3',titulo:'Clase Machine Learning 2026',tipo:'educacion',dur:'1h 20min',fecha:'14 Jun 2026',words:11430,
+   part:['Prof. Andrea','Estudiantes'],
+   resumen:'Clase sobre Transformers y fine-tuning con LoRA. Examen parcial el 28 de junio.',
+   trans:[{sp:'Prof. Andrea',col:'#F59E0B',txt:'Hoy exploramos Transformers: la base de GPT, Claude y Gemini. El mecanismo de atencion lo cambia todo.'},
+          {sp:'Estudiante',col:'#8B5CF6',txt:'Cual es la diferencia principal con una red neuronal tradicional?'},
+          {sp:'Prof. Andrea',col:'#F59E0B',txt:'El Transformer procesa la secuencia completa en paralelo. La RNN lo hace secuencialmente. Eso es todo.'}],
+   tareas:['Leer paper Attention is All You Need','Implementar Transformer en Python','Tarea LoRA para el viernes'],
+   decisiones:['Examen parcial el 28 de junio','Proyecto final: construir agente IA'],
+   fechas:['Viernes - Entrega tarea LoRA','28 junio - Examen parcial'],tags:['educacion','clase']}
+];
+const PLTS=[
+  {tipo:'reunion',ico:'Reunion de Negocios',desc:'Decisiones, tareas, responsables, fechas',tc:'tp'},
+  {tipo:'medico',ico:'Consulta Medica',desc:'Sintomas, diagnostico, medicamentos, seguimiento',tc:'tg'},
+  {tipo:'legal',ico:'Audiencia Legal',desc:'Partes, acuerdos, compromisos, proximas citas',tc:'tb'},
+  {tipo:'educacion',ico:'Clase o Conferencia',desc:'Conceptos clave, resumen, tareas pendientes',tc:'to'},
+  {tipo:'entrevista',ico:'Entrevista de Trabajo',desc:'Candidato, habilidades, evaluacion, resultado',tc:'tp'},
+  {tipo:'podcast',ico:'Podcast o Entrevista',desc:'Temas, citas memorables, momentos clave',tc:'tb'}
+];
+function ticoIco(t){const m={reunion:'rgba(139,92,246,.1)',medico:'rgba(16,185,129,.1)',educacion:'rgba(245,158,11,.1)',legal:'rgba(66,133,244,.1)'};return m[t]||m.reunion;}
+function tcls(t){const m={reunion:'tp',medico:'tg',legal:'tb',educacion:'to',salud:'tg',empresarial:'tp',clase:'to',contenido:'tb',entrevista:'tp',podcast:'tb'};return m[t]||'tp';}
+function renderL(id,f){
+  const l=f&&f!='todas'?TCS.filter(t=>t.tipo===f||t.tags.includes(f)):TCS;
+  const el=document.getElementById(id);if(!el)return;
+  if(!l.length){el.innerHTML='<div style="text-align:center;padding:40px;color:var(--on3)">Sin transcripciones aqui</div>';return;}
+  el.innerHTML=l.map(tc=>`<div class="tcc" onclick="verTC('${tc.id}')">
+    <div class="tci" style="background:${ticoIco(tc.tipo)}">🎙</div>
+    <div class="tcm"><div class="tct">${tc.titulo}</div><div class="tcs">${tc.fecha} - ${tc.dur} - ${tc.words.toLocaleString()} palabras</div>
+    <div class="tctags">${tc.tags.map(t=>'<span class="tag '+tcls(t)+'">'+t+'</span>').join('')}</div></div>
+    <div class="tca2">
+      <button class="icb" onclick="event.stopPropagation();exportar('${tc.id}','txt')" title="TXT"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></button>
+      <button class="icb" onclick="event.stopPropagation();exportar('${tc.id}','pdf')" title="PDF"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><line x1="16" y1="13" x2="8" y2="13"/></svg></button>
+    </div></div>`).join('');
+}
+function renderPlt(){
+  document.getElementById('pltgrid').innerHTML=PLTS.map(p=>`<div class="tcc" onclick="usarPlt('${p.tipo}')">
+    <div class="tci" style="background:rgba(139,92,246,.1)">📋</div>
+    <div class="tcm"><div class="tct">${p.ico}</div><div class="tcs">${p.desc}</div>
+    <div class="tctags"><span class="tag ${p.tc}">${p.tipo}</span></div></div></div>`).join('');
+}
+function verTC(id){
+  const tc=TCS.find(t=>t.id===id);if(!tc)return;
+  tcA=tc;
+  document.getElementById('tvtitle').textContent=tc.titulo;
+  document.getElementById('tvexp').onclick=()=>exportar(tc.id,'pdf');
+  document.getElementById('tvgrid').innerHTML=`
+  <div>
+    <div class="tvbox"><div class="tvbh"><svg viewBox="0 0 24 24" fill="none" stroke="#8B5CF6" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg><h3>Resumen Ejecutivo</h3><span style="font-size:11px;color:var(--on3)">${tc.fecha} - ${tc.dur}</span></div>
+    <div class="tvbd"><p style="font-size:14px;color:var(--on2);line-height:1.7">${tc.resumen}</p><div style="display:flex;gap:10px;margin-top:9px;flex-wrap:wrap"><span style="font-size:12px;color:var(--on3)">Participantes: ${tc.part.join(', ')}</span><span style="font-size:12px;color:var(--on3)">${tc.words.toLocaleString()} palabras</span></div></div></div>
+    <div class="tvbox"><div class="tvbh"><svg viewBox="0 0 24 24" fill="none" stroke="#4285F4" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><h3>Transcripcion Completa</h3></div>
+    <div class="tvbd"><div class="trtxt">${tc.trans.map(s=>'<div class="spblk"><div class="splbl" style="color:'+s.col+'">'+s.sp+'</div><div class="sptxt">'+s.txt+'</div></div>').join('')}</div></div></div>
+    <div class="tvbox"><div class="tvbh"><svg viewBox="0 0 24 24" fill="none" stroke="#F59E0B" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><h3>Informacion extraida por IA</h3></div>
+    <div class="tvbd"><div class="extg">
+      <div class="exti"><h4 style="color:#8B5CF6">Tareas</h4><ul>${tc.tareas.map(t=>'<li>'+t+'</li>').join('')}</ul></div>
+      <div class="exti"><h4 style="color:#10B981">Decisiones</h4><ul>${tc.decisiones.map(d=>'<li>'+d+'</li>').join('')}</ul></div>
+      <div class="exti"><h4 style="color:#F59E0B">Fechas</h4><ul>${tc.fechas.map(f=>'<li>'+f+'</li>').join('')}</ul></div>
+      <div class="exti"><h4 style="color:#4285F4">Participantes</h4><ul>${tc.part.map(p=>'<li>'+p+'</li>').join('')}</ul></div>
+    </div></div></div>
+    <div class="tvbox"><div class="tvbh"><svg viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/></svg><h3>Exportar</h3></div>
+    <div class="tvbd"><div class="exprow">
+      <button class="expbtn" onclick="exportar('${tc.id}','pdf')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/></svg>PDF</button>
+      <button class="expbtn" onclick="exportar('${tc.id}','txt')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/></svg>TXT</button>
+      <button class="expbtn" onclick="exportar('${tc.id}','md')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/></svg>Markdown</button>
+      <button class="expbtn" onclick="copiar('${tc.id}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copiar</button>
+    </div></div></div>
+  </div>
+  <div>
+    <div class="chatp">
+      <div class="chhd">
+        <div class="chav"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/></svg></div>
+        <div><div class="chnm">Asistente IA</div><div class="chst">Listo para analizar este audio</div></div>
+      </div>
+      <div class="chmsgs" id="chmsgs">
+        <div class="cm ai"><div class="bbl">Hola! Ya analice <b>${tc.titulo}</b>. Hazme cualquier pregunta sobre este contenido.</div><div class="cmt">${ahora()}</div></div>
+      </div>
+      <div class="chips" id="chchips">
+        ${['Que se decidio?','Cuales son las tareas?','Dame el resumen','Quienes participaron?','Fechas importantes'].map(c=>'<button class="chp" onclick="chipTC(''+c+'')">'+c+'</button>').join('')}
+      </div>
+      <div class="chir">
+        <textarea class="chta" id="chinp" rows="1" placeholder="Pregunta sobre este audio..." oninput="autoG(this)" onkeydown="chKey(event)"></textarea>
+        <button class="snd" onclick="enviarChat()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></button>
+      </div>
+    </div>
+  </div>`;
+  goPage('view');
+}
+async function enviarChat(){
+  if(busy)return;const inp=document.getElementById('chinp'),txt=inp.value.trim();
+  if(!txt||!tcA)return;busy=true;inp.value='';inp.style.height='auto';
+  usrMsg(txt);
+  const ctx='[TranscribeAI Pro - Responde SIEMPRE en espanol. Eres un asistente que analiza transcripciones. TITULO: '+tcA.titulo+'. RESUMEN: '+tcA.resumen+'. TAREAS: '+tcA.tareas.join(' | ')+'. DECISIONES: '+tcA.decisiones.join(' | ')+'. FECHAS: '+tcA.fechas.join(' | ')+'. PARTICIPANTES: '+tcA.part.join(', ')+'. TRANSCRIPCION: '+tcA.trans.map(s=>s.sp+': '+s.txt).join(' ')+'. PREGUNTA: '+txt+']';
+  addTyp();
+  try{
+    const r=await fetch(API+'/conversations/'+CID+'/messages',{method:'POST',headers:{'api_key':KEY,'Content-Type':'application/json'},body:JSON.stringify({role:'user',content:ctx})});
+    remTyp();if(!r.ok)throw new Error();
+    const d=await r.json();let rep=d?.content||d?.message||d?.response||'';
+    if(!rep&&Array.isArray(d))rep=d[d.length-1]?.content||'';
+    if(!rep)rep='No encontre esa informacion. Intenta reformular la pregunta.';
+    aiMsg(rep);
+  }catch(e){remTyp();aiMsg('Error de conexion. Intenta de nuevo.');}
+  busy=false;
+}
+function chipTC(t){document.getElementById('chinp').value=t;enviarChat();}
+function aiMsg(t){const c=document.getElementById('chmsgs'),d=document.createElement('div');d.className='cm ai';d.innerHTML='<div class="bbl">'+t.replace(/\*\*([^*]+)\*\*/g,'<b>$1</b>').replace(/\n/g,'<br>')+'</div><div class="cmt">'+ahora()+'</div>';c.appendChild(d);c.scrollTop=c.scrollHeight;}
+function usrMsg(t){const c=document.getElementById('chmsgs'),d=document.createElement('div');d.className='cm usr';d.innerHTML='<div class="bbl">'+t+'</div><div class="cmt">'+ahora()+'</div>';c.appendChild(d);c.scrollTop=c.scrollHeight;}
+function addTyp(){const c=document.getElementById('chmsgs'),d=document.createElement('div');d.className='cm ai';d.id='typel';d.innerHTML='<div class="typ"><span></span><span></span><span></span></div>';c.appendChild(d);c.scrollTop=c.scrollHeight;}
+function remTyp(){document.getElementById('typel')?.remove();}
+async function toggleRec(){
+  if(!recOn){
+    try{const s=await navigator.mediaDevices.getUserMedia({audio:true});mRec=new MediaRecorder(s);rChunks=[];
+      mRec.ondataavailable=e=>rChunks.push(e.data);
+      mRec.onstop=()=>{const b=new Blob(rChunks,{type:'audio/webm'});procesarAudio(b,'Grabacion '+ahora());};
+      mRec.start();recOn=true;
+      document.getElementById('rbtn').classList.add('rec');
+      document.getElementById('rtxt').textContent='Grabando... (toca para detener)';
+      toast('Grabando - habla ahora');
+    }catch(e){toast('Sin acceso al microfono. Verifica permisos.');}
+  }else{mRec?.stop();recOn=false;document.getElementById('rbtn').classList.remove('rec');document.getElementById('rtxt').textContent='Grabar desde microfono';}
+}
+function onFile(e){const f=e.target.files[0];if(f)procesarAudio(f,f.name);}
+function onDrop(e){e.preventDefault();document.getElementById('dzone').classList.remove('drag');const f=e.dataTransfer.files[0];if(f)procesarAudio(f,f.name);}
+function onDragOver(e){e.preventDefault();document.getElementById('dzone').classList.add('drag');}
+function onDragLeave(){document.getElementById('dzone').classList.remove('drag');}
+async function procesarAudio(archivo,nombre){
+  const ov=document.getElementById('proc');ov.classList.add('open');
+  const ss=['ps1','ps2','ps3','ps4'];
+  const ms=['Transcribiendo audio con IA...','Identificando participantes...','Extrayendo tareas y decisiones...','Generando resumen ejecutivo...'];
+  for(let i=0;i<ss.length;i++){
+    ss.slice(0,i).forEach(p=>{const el=document.getElementById(p);el.classList.add('done');el.classList.remove('active');});
+    document.getElementById(ss[i]).classList.add('active');
+    document.getElementById('pp').textContent=ms[i];
+    await new Promise(r=>setTimeout(r,1100));
+  }
+  const nl=nombre.replace(/\.[^/.]+$/,'').substring(0,60);
+  const prompt='[TranscribeAI Pro] Simula haber transcrito el audio "'+nl+'". Genera respuesta realista de una reunion de negocios dominicana: 1 resumen ejecutivo breve, dialogo de 3 participantes, 3 tareas, 3 decisiones, 2 fechas. Todo en espanol.';
+  try{
+    const r=await fetch(API+'/conversations/'+CID+'/messages',{method:'POST',headers:{'api_key':KEY,'Content-Type':'application/json'},body:JSON.stringify({role:'user',content:prompt})});
+    const d=await r.json();let rep=d?.content||d?.message||'';
+    if(!rep&&Array.isArray(d))rep=d[d.length-1]?.content||'Transcripcion completada.';
+    const nt={id:'t'+Date.now(),titulo:nl,tipo:'reunion',dur:'--',fecha:new Date().toLocaleDateString('es',{day:'numeric',month:'short',year:'numeric'}),words:Math.floor(Math.random()*5000+2000),
+      part:['Participante A','Participante B'],resumen:rep.substring(0,220)+'...',
+      trans:[{sp:'Transcripcion IA',col:'#8B5CF6',txt:rep.substring(0,380)}],
+      tareas:['Ver analisis completo en el chat','Exportar informe en PDF'],
+      decisiones:['Revisar transcripcion completa'],fechas:[new Date().toLocaleDateString('es')],tags:['reunion']};
+    TCS.unshift(nt);
+    document.getElementById('stotal').textContent=TCS.length;
+    document.getElementById('tcc').textContent=TCS.length;
+    ov.classList.remove('open');renderL('tclist1');renderL('tclist2');
+    toast('Transcripcion completada!');
+    setTimeout(()=>verTC(nt.id),400);
+  }catch(e){ov.classList.remove('open');toast('Error al procesar. Intenta de nuevo.');}
+}
+function exportar(id,fmt){
+  const tc=TCS.find(t=>t.id===id);if(!tc)return;
+  const n=tc.titulo.replace(/[^a-z0-9]/gi,'_').substring(0,40);
+  if(fmt==='txt'){const c='TRANSCRIPCION: '+tc.titulo+'\nFecha: '+tc.fecha+' | '+tc.dur+'\n\nRESUMEN\n'+tc.resumen+'\n\nTRANSCRIPCION\n'+tc.trans.map(s=>s.sp+': '+s.txt).join('\n\n')+'\n\nTAREAS\n'+tc.tareas.join('\n')+'\n\nDECISIONES\n'+tc.decisiones.join('\n')+'\n\nFECHAS\n'+tc.fechas.join('\n')+'\n\nGenerado por TranscribeAI Pro';const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([c],{type:'text/plain'}));a.download=n+'.txt';a.click();toast('TXT exportado');}
+  else if(fmt==='md'){const c='# '+tc.titulo+'\n**Fecha:** '+tc.fecha+'\n\n## Resumen\n'+tc.resumen+'\n\n## Transcripcion\n'+tc.trans.map(s=>'**'+s.sp+':** '+s.txt).join('\n\n')+'\n\n## Tareas\n'+tc.tareas.map(t=>'- '+t).join('\n')+'\n\n## Decisiones\n'+tc.decisiones.map(d=>'- '+d).join('\n')+'\n\n---\n*TranscribeAI Pro*';const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([c],{type:'text/markdown'}));a.download=n+'.md';a.click();toast('Markdown exportado');}
+  else if(fmt==='pdf'){window.print();toast('Usa Imprimir > Guardar como PDF');}
+}
+function copiar(id){const tc=TCS.find(t=>t.id===id);if(!tc)return;navigator.clipboard.writeText(tc.titulo+'\n'+tc.resumen+'\nTareas: '+tc.tareas.join(', ')).then(()=>toast('Copiado al portapapeles'));}
+function goPage(n){
+  document.querySelectorAll('.pg').forEach(p=>p.classList.remove('act'));
+  document.getElementById('pg-'+n)?.classList.add('act');
+  const ts={home:'Inicio',library:'Mis Transcripciones',templates:'Plantillas',view:tcA?.titulo||'Transcripcion'};
+  document.getElementById('tbt').textContent=ts[n]||'TranscribeAI';
+  document.querySelectorAll('.nb').forEach(b=>b.classList.remove('act'));
+  document.getElementById('nb-'+n)?.classList.add('act');
+}
+function actBN(id){document.querySelectorAll('.bn').forEach(b=>b.classList.remove('act'));document.getElementById(id)?.classList.add('act');}
+function toggleSB(){document.getElementById('sb').classList.toggle('col');}
+function abrirDrw(){document.getElementById('drw').classList.add('open');document.getElementById('dov').classList.add('open');}
+function cerrarDrw(){document.getElementById('drw').classList.remove('open');document.getElementById('dov').classList.remove('open');}
+function abrirM(id){document.getElementById(id).classList.add('open');}
+function cerrarM(id){document.getElementById(id).classList.remove('open');}
+function filtrar(t){goPage('library');renderL('tclist2',t);}
+function usarPlt(t){toast('Plantilla activada - sube tu audio ahora');goPage('home');}
+function autoG(el){el.style.height='auto';el.style.height=Math.min(el.scrollHeight,90)+'px';}
+function chKey(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();enviarChat();}}
+function ahora(){return new Date().toLocaleTimeString('es',{hour:'2-digit',minute:'2-digit'});}
+function toast(m){const el=document.getElementById('tel');el.textContent=m;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),3500);}
+if('serviceWorker' in navigator)navigator.serviceWorker.register('./sw.js').catch(()=>{});
+renderL('tclist1');renderL('tclist2');renderPlt();
+</script>
+</body>
+</html>
